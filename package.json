@@ -1,0 +1,19 @@
+{
+  "name": "ozz",
+  "version": "1.0.0",
+  "description": "NPM package to send conversation data to ozz.ai",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "continuous",
+    "learning",
+    "automated",
+    "testing",
+    "ozz.ai",
+    "analytics"
+  ],
+  "author": "Akshay Kulkarni (https://ozz.ai)",
+  "license": "ISC"
+}
