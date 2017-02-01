@@ -1,6 +1,6 @@
 {
   "name": "ozz",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "NPM package to send conversation data to ozz.ai",
   "main": "index.js",
   "scripts": {
