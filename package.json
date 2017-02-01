@@ -15,5 +15,6 @@
     "analytics"
   ],
   "author": "Akshay Kulkarni (https://ozz.ai)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {}
 }
