@@ -1,78 +1,75 @@
 var request = require('request');
+var rp = require('request-promise');
 
 
-function logConversation(bot_guid){
+function ozzai(setup){
 	var that = this;
 
 	that.url = 'https://api.ozz.ai/conversations'
-	that.bot_guid = bot_guid;
+	that.setup = setup
 
-	that.logIncoming = function(data){
-		data['bot_guid'] = that.bot_guid;
-
-		//Check required entities and throw error
-		if (typeof data['message'] === 'undefined'){
-			throw new Error('You must supply message');
-		}
-
-		//Check if optional params supplied and put default value if not
-		data['sender_name'] = typeof data['sender_name'] !== 'undefined'? data['sender_name'] : "";
-		data['sender_id'] = typeof data['sender_id'] !== 'undefined'? data['sender_id'] : "";
-		data['payload'] = typeof data['payload'] !== 'undefined'? data['payload'] : {};
-
-		data['isBotReply'] = false
-		data['intent'] =''
-		data['entities'] = {}
-		data['convo_id'] = ''
-
-		request({
-			url: that.url,
-			method: 'POST',
-			json: data
-		}, function(err, response){
-			if (err){
-				throw err;
-			}
-			console.log(response.body);
-		})	
-	}
-
-	that.logOutgoing = function(data){
-		data['bot_guid'] = that.bot_guid;
-
-		//Check required entities and throw error
-		if (typeof data['message'] === 'undefined'){
-			throw new Error('You must supply message');
-		}
-
-		//Check if optional params supplied and put default value if not
-		data['sender_name'] = typeof data['sender_name'] !== 'undefined'? data['sender_name'] : "";
-		data['sender_id'] = typeof data['sender_id'] !== 'undefined'? data['sender_id'] : "";
-		data['payload'] = typeof data['payload'] !== 'undefined'? data['payload'] : {};
-
-		data['isBotReply'] = true
-		data['intent'] =''
-		data['entities'] = {}
-		data['convo_id'] = ''
+	that.message = function(message){
+		var data = that.setup;
 		
-		request({
-			url: that.url,
-			method: 'POST',
-			json: data
-		}, function(err, response){
-			if (err){
-				throw err;
+		if ("url" in data){
+			var base_url = data["url"];
+			if (base_url[base_url.length-1] == '/'){
+				base_url = base_url.substring(0, base_url.length - 1);
 			}
-			console.log(response.body);
-		})	
+		}else{
+			var base_url = "https://ozz.ai";
+		}
+
+		var url = base_url + '/api/parse/' + data["bot_guid"];
+
+		var options = { method: 'POST',
+			url: url,
+			headers: 
+			{
+				'cache-control': 'no-cache',
+				'content-type': 'application/json' 
+			},
+			body: { q: message },
+			json: true };
+		
+		var options_log = { method: 'POST',
+			url: 'https://ozz.ai/api/logs',
+			headers: 
+				{'cache-control': 'no-cache',
+				'content-type': 'application/json' },
+			body: 
+				{ message: message,
+				bot_guid: data.bot_guid,
+				pat: data.pat,
+				pid: data.pid,
+				url: base_url },
+			json: true };
+		
+		request(options_log, function (error, response, body) {
+			if (error) throw new Error(error);
+		});
+		return rp(options);
 	}
 }
 
-function ozz(bot_guid){
+function ozz(setup){
 
-	if (!bot_guid){
+	if (!setup){
 		throw new Error('You must supply API Key');
 	}
-	return new logConversation(bot_guid);
+
+	if (!("bot_guid" in setup)){
+		throw new Error('You must supply Bot GUID');
+	}
+
+	if (!("pat" in setup)){
+		throw new Error('You must supply Page Access Token');
+	}
+
+	if (!("pid" in setup)){
+		throw new Error('You must supply FB Page ID');
+	}
+	
+	return new ozzai(setup);
 }
 module.exports = ozz;

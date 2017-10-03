@@ -1,8 +1,14 @@
-var ozz = require('./index')('6c73c666-e7cd-11e6-b179-123e4509c2b0'); 
-
-var data = {
-    'message':'Hey',
-    'sender_id':123,
-    'sender_name':'akshay'
+const ozz_setup = {
+    "pat":"pat",
+    "pid":"pid",
+    "bot_guid":"1da94dd2-9bdf-11e7-9399-0242ac110007"
 }
-ozz.logOutgoing(data);
+
+const ozz = require('../index')(ozz_setup); 
+
+const message = "hi";
+
+ozz.message(message)
+    .then( function(body){
+        console.log(body);
+    })

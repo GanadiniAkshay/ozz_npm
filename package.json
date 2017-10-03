@@ -20,5 +20,8 @@
   },
   "author": "Akshay Kulkarni (https://ozz.ai)",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
 }
